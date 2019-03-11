@@ -1,0 +1,19 @@
+{
+  "name": "ship-logs-to-honey",
+  "version": "1.0.0",
+  "description": "Sends log events to honeycomb.io",
+  "main": "index.js",
+  "repository": "https://github.com/solve-hq/ShipLogsToHoneycomb",
+  "author": "SAM CLI",
+  "license": "MIT",
+  "dependencies": {
+    "libhoney": "^1.2.1",
+    "libhoney-promise": "^1.0.0"
+  },
+  "devDependencies": {
+    "aws-sdk": "*"
+  },
+  "files": [
+    "index.js"
+  ]
+}

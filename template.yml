@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  ship-logs-to-honeycomb-app
+
+  Ship Logs provided by the lambda-logs-event-source app to honeycomb.io
+
+Resources:
+  ShipLogsToHoney:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./functions/ship-logs-to-honey
+      Handler: index.handler
+      MemorySize: 2048
+      ReservedConcurrentExecutions: 20
+      Runtime: nodejs8.10
+      Timeout: 30
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource:
+                - !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:ShipLogs/*
+  LogSource:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location:
+        ApplicationId: arn:aws:serverlessrepo:us-east-1:958845080241:applications/lambda-logs-event-source
+        SemanticVersion: 1.0.0
+      Parameters:
+        EventProcessorFunctionName: !Ref ShipLogsToHoney
