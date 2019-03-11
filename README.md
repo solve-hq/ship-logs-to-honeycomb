@@ -27,11 +27,11 @@ $ sam deploy --template-file ./.aws-sam/build/packaged.yml \
 
 ### Honeycomb Credentials
 
-Make sure to provide your Honeycomb `writeKey` and `dateset` to this app by creating a secret in [AWS Secrets Manager](https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.html), like so:
+Make sure to provide your Honeycomb `writeKey` and `dateset` to this app by creating a secret in [AWS Secrets Manager](https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.html).
+
+> **Note** Make sure to create the secret in the same region the app is deploying to
 
 ![create secret 1](/assets/create-secret-1.png)
-_Make sure to create the secret in the same region the app is deploying to_
-
 ![create secret 2](/assets/create-secret-2.png)
 ![create secret 3](/assets/create-secret-3.png)
 ![create secret 4](/assets/create-secret-4.png)
