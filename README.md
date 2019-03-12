@@ -19,7 +19,7 @@ $ sam package --template-file ./.aws-sam/build/template.yaml \
 
 $ sam deploy --template-file ./.aws-sam/build/packaged.yml \
              --stack-name <STACK NAME> \
-             --capabilities CAPABILITY_IAM \
+             --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND \
              --region <TARGET AWS REGION>
 ```
 
