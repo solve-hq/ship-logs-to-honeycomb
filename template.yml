@@ -28,6 +28,6 @@ Resources:
     Properties:
       Location:
         ApplicationId: arn:aws:serverlessrepo:us-east-1:958845080241:applications/lambda-logs-event-source
-        SemanticVersion: 1.0.1
+        SemanticVersion: 1.0.2
       Parameters:
         EventProcessorFunctionName: !Ref ShipLogsToHoney
