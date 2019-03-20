@@ -8,7 +8,8 @@
   "license": "MIT",
   "dependencies": {
     "libhoney": "^1.2.1",
-    "libhoney-promise": "^1.0.0"
+    "libhoney-promise": "^1.0.0",
+    "debug": "^4.1.1"
   },
   "devDependencies": {
     "aws-sdk": "*"

@@ -1,4 +1,5 @@
 const { createHoneyClient } = require("libhoney-promise");
+const debug = require("debug")("ship-logs-to-honey");
 
 const correlateApiGatewayTraces = event => {
   if (event.service_name !== "APIGateway") {
@@ -31,13 +32,11 @@ const correlateApiGatewayTraces = event => {
   };
 };
 
-const processAll = async (events, logger, hny) => {
+const processAll = async (events, hny) => {
   const sendOperations = events.map(event => {
     const correlatedEvent = correlateApiGatewayTraces(event);
 
-    logger.debug("sending event data to honey", {
-      event: correlatedEvent
-    });
+    debug("sending event data to honey: %o", correlatedEvent);
 
     return hny.sendEventNow(correlatedEvent);
   });
@@ -45,23 +44,29 @@ const processAll = async (events, logger, hny) => {
   return Promise.all(sendOperations);
 };
 
-let honeycombIOOptions;
+let honeyClient;
 
 const SecretsManager = require("aws-sdk/clients/secretsmanager");
 const secretsManager = new SecretsManager({ region: process.env.AWS_REGION });
 
 const handler = async event => {
-  if (!honeycombIOOptions) {
+  if (!honeyClient) {
+    debug(
+      "Initializing Honeycomb.IO client with configuration from ShipLogs/HoneycombIO"
+    );
+
     const getSecretResponse = await secretsManager
       .getSecretValue({ SecretId: "ShipLogs/HoneycombIO" })
       .promise();
 
-    honeycombIOOptions = JSON.parse(getSecretResponse.SecretString || "{}");
+    const honeycombIOOptions = JSON.parse(
+      getSecretResponse.SecretString || "{}"
+    );
+
+    honeyClient = createHoneyClient(honeycombIOOptions);
   }
 
-  const hny = createHoneyClient(honeycombIOOptions);
-
-  return processAll(event, logger, hny);
+  return processAll(event, honeyClient);
 };
 
 exports.handler = handler;
