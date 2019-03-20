@@ -1,0 +1,17 @@
+{
+  "name": "ship-logs-to-honeycomb",
+  "version": "1.0.0",
+  "description": "An AWS SAM app that sends logs provided by the lambda-logs-event-source app to honeycomb.io",
+  "author": "Eric Allam @ericallam",
+  "license": "MIT",
+  "bugs": "https://github.com/solve-hq/ship-logs-to-honeycomb/issues",
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "devDependencies": {
+    "aws-sam-helper-commands": "file:../../tools/aws-sam-helper-commands",
+    "aws-sdk": "2.x"
+  },
+  "homepage": "https://github.com/solve-hq/ship-logs-to-honeycomb",
+  "repository": "https://github.com/solve-hq/ship-logs-to-honeycomb"
+}

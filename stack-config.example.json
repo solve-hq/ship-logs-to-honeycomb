@@ -1,0 +1,14 @@
+{
+  "profile": "eric",
+  "capabilities": ["CAPABILITY_IAM", "CAPABILITY_AUTO_EXPAND"],
+  "regions": {
+    "eu-west-2": {
+      "bucket": "eric-source-code-eu-west-2"
+    }
+  },
+  "stacks": {
+    "ship-logs-to-honey": {
+      "stage": "dev"
+    }
+  }
+}

@@ -91,10 +91,8 @@ ansicolors@~0.3.2:
   resolved "https://registry.yarnpkg.com/ansicolors/-/ansicolors-0.3.2.tgz#665597de86a9ffe3aa9bfbe6cae5c6ea426b4979"
   integrity sha1-ZlWX3oap/+Oqm/vmyuXG6kJrSXk=
 
-aws-sam-helper-commands@0.x:
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/aws-sam-helper-commands/-/aws-sam-helper-commands-0.0.4.tgz#a594134b80d9352cdafc4932e2c9424575c3acb8"
-  integrity sha512-Oe6MxFoxPDg3tq95V5Z0T3PKypgAyCWuXaIEEmRel3/56Irk9VDQvuUIsLCAO9x56E1KVX1TJnQRofjYwtvnmg==
+"aws-sam-helper-commands@file:../../tools/aws-sam-helper-commands":
+  version "0.0.6"
   dependencies:
     "@oclif/command" "^1"
     "@oclif/config" "^1"
@@ -106,7 +104,22 @@ aws-sam-helper-commands@0.x:
     lodash.pick "^4.4.0"
     yaml "^1.1.0"
 
-aws-sdk@^2.375.0, aws-sdk@^2.395.0:
+aws-sdk@2.x:
+  version "2.424.0"
+  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.424.0.tgz#e1967c1000c60f374d5b3bfb7f1f47341b0cfe8b"
+  integrity sha512-p+CWTXgYnERDTJ7wtftBK5SayxeXWNHTbx7jh8MPX0wjqB3Xz8Bddsep8cwj6ZvEwGnI1fxohVPf8EbkB5vWPg==
+  dependencies:
+    buffer "4.9.1"
+    events "1.1.1"
+    ieee754 "1.1.8"
+    jmespath "0.15.0"
+    querystring "0.2.0"
+    sax "1.2.1"
+    url "0.10.3"
+    uuid "3.3.2"
+    xml2js "0.4.19"
+
+aws-sdk@^2.375.0:
   version "2.405.0"
   resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.405.0.tgz#77bd076ad05db2647caeb0645896257b8868ca6c"
   integrity sha512-krgJBy/5FFGFjlOoODLH4ryXqUSQKz6He6QdIboKXvjIEV2CNxsoB+tFaThKD3SZmFcRxoWjho7R17dIlswTtQ==
