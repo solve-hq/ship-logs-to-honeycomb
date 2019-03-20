@@ -91,8 +91,10 @@ ansicolors@~0.3.2:
   resolved "https://registry.yarnpkg.com/ansicolors/-/ansicolors-0.3.2.tgz#665597de86a9ffe3aa9bfbe6cae5c6ea426b4979"
   integrity sha1-ZlWX3oap/+Oqm/vmyuXG6kJrSXk=
 
-"aws-sam-helper-commands@file:../../tools/aws-sam-helper-commands":
-  version "0.0.6"
+aws-sam-helper-commands@0.x:
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/aws-sam-helper-commands/-/aws-sam-helper-commands-0.0.7.tgz#21b2792269a18d226d16fb1427067e08e12e5432"
+  integrity sha512-1UV1nyIckSjaXuXtFRgbLuPzNmglcXyjjftptmRO4OBsoPLdKRY09mv0ynZTStkbJRTv33h6DMAgacqFonNS/Q==
   dependencies:
     "@oclif/command" "^1"
     "@oclif/config" "^1"

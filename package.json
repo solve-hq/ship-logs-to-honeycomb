@@ -9,7 +9,7 @@
     "node": ">=8.0.0"
   },
   "devDependencies": {
-    "aws-sam-helper-commands": "file:../../tools/aws-sam-helper-commands",
+    "aws-sam-helper-commands": "0.x",
     "aws-sdk": "2.x"
   },
   "homepage": "https://github.com/solve-hq/ship-logs-to-honeycomb",
