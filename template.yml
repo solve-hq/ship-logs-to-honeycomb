@@ -31,4 +31,5 @@ Resources:
         SemanticVersion: 1.0.4
       Parameters:
         EventProcessorFunctionName: !Ref ShipLogsToHoney
-        DebugEnabled: "no"
+        DebugEnabled: "no" # set this to "yes" to enable debug logs in the lambda-logs-event-source functions
+        RetentionDays: 7 # set this to the number of days to retain cloudwatch logs
