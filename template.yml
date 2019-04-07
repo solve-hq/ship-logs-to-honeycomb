@@ -28,7 +28,7 @@ Resources:
     Properties:
       Location:
         ApplicationId: arn:aws:serverlessrepo:us-east-1:958845080241:applications/lambda-logs-event-source
-        SemanticVersion: 1.0.4
+        SemanticVersion: 1.0.5
       Parameters:
         EventProcessorFunctionName: !Ref ShipLogsToHoney
         DebugEnabled: "no" # set this to "yes" to enable debug logs in the lambda-logs-event-source functions
