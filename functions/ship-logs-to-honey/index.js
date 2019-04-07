@@ -26,9 +26,16 @@ const correlateApiGatewayTraces = event => {
     "trace.parent_id": parentSpanId
   };
 
+  const additionalFields = {};
+
+  if (event.http_method && event.http_resource_path) {
+    additionalFields.name = `${event.http_method} ${event.http_resource_path}`;
+  }
+
   return {
     ...event,
-    ...traceData
+    ...traceData,
+    ...additionalFields
   };
 };
 
