@@ -24,34 +24,6 @@ const initHoneyClient = (secretId) => {
   return createHoneyClient(honeycombIOOptions);
 }
 
-const parseLogEvent = data => {
-  const compressedPayload = new Buffer(data, "base64");
-  const payload = await gunzip(compressedPayload);
-  const json = payload.toString("utf8");
-
-  const logEvent = JSON.parse(json);
-  const { logGroup, logStream, logEvents } = logEvent;
-  debug("parsed logEvents for %s - %s: %O", logGroup, logStream, {
-    logEvents
-  });
-
-  return logEvents;
-};
-
-const extractLogEvents = event => {
-  // CloudWatch Logs
-  if (event.awslogs) {    
-    return parseLogEvent(event.awslogs.data);
-  }
-  
-  // Kinesis
-  if (event.Records && event.Records[0].eventSource === "aws:kinesis") {
-    return _.flatMap(event.Records, record => parseLogEvent(record.kinesis.data));
-  } else {
-    throw new Error("Unsupported event source. Only CloudWatch Logs and Kinesis events are supported");
-  }
-};
-
 const tryParseJson = str => {
   try {
     return JSON.parse(str);
@@ -78,6 +50,33 @@ const parseLogData = event => {
     log_timestamp,
     ...data
   };
+};
+
+const parseCWLogEvent = data => {
+  const compressedPayload = new Buffer(data, "base64");
+  const payload = await gunzip(compressedPayload);
+  const json = payload.toString("utf8");
+
+  const logEvent = JSON.parse(json);
+  const { logGroup, logStream, logEvents } = logEvent;
+  debug("parsed logEvents for %s - %s", logGroup, logStream);
+
+  return logEvents.map(parseLogData).filter(event => event !== null);
+};
+
+const extractLogEvents = event => {
+  // CloudWatch Logs
+  if (event.awslogs) {    
+    return parseCWLogEvent(event.awslogs.data);
+  }
+  
+  // Kinesis
+  if (event.Records && event.Records[0].eventSource === "aws:kinesis") {
+    return _.flatMap(event.Records, record => parseCWLogEvent(record.kinesis.data));
+  }
+  
+  // direct invocations - expect an array of events
+  return event;
 };
 
 const correlateApiGatewayTraces = event => {
@@ -119,13 +118,7 @@ const correlateApiGatewayTraces = event => {
 };
 
 const processAll = async (logEvents, honeyClient) => {
-  const parsedEvents = logEvents.map(parseLogData).filter(event => event !== null);
-
-  if (!parsedEvents.length) {
-    return;
-  }
-
-  const sendOperations = parsedEvents.map(event => {
+  const sendOperations = logEvents.map(event => {
     const correlatedEvent = correlateApiGatewayTraces(event);
 
     debug("sending event data to honeycomb: %o", correlatedEvent);

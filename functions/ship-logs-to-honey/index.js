@@ -1,21 +1,11 @@
 const debug = require("debug")("ship-logs-to-honey");
 const { initHoneyClient, extractLogEvents, processAll } = require('./lib')
 
-const processAll = async (events, hny) => {
-  const sendOperations = events.map(event => {
-    const correlatedEvent = correlateApiGatewayTraces(event);
-
-    debug("sending event data to honey: %o", correlatedEvent);
-
-    return hny.sendEventNow(correlatedEvent);
-  });
-
-  return Promise.all(sendOperations);
-};
-
 let honeyClient;
 
 const handler = async event => {
+  debug(`received invocation event`, { event })
+
   if (!honeyClient) {
     honeyClient = await initHoneyClient("ShipLogs/HoneycombIO");    
   }
