@@ -5,19 +5,6 @@ Description: >
 
   Ship logs to honeycomb.io
 
-Metadata:
-  AWS::ServerlessRepo::Application:
-    Name: ship-logs-to-honeycomb
-    Description: A serverless app that ships logs to honeycomb.io
-    Author: Eric Allam
-    SpdxLicenseId: MIT
-    LicenseUrl: LICENSE
-    ReadmeUrl: README.md
-    Labels: ["logging", "observability", "lambda"]
-    HomePageUrl: https://github.com/solve-hq/ship-logs-to-honeycomb
-    SemanticVersion: 1.0.0
-    SourceCodeUrl: https://github.com/solve-hq/ship-logs-to-honeycomb
-
 Resources:
   ShipLogsToHoney:
     Type: AWS::Serverless::Function
