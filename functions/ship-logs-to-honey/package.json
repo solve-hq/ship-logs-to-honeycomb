@@ -1,15 +1,17 @@
 {
   "name": "ship-logs-to-honey",
+  "private": true,
   "version": "1.0.0",
   "description": "Sends log events to honeycomb.io",
   "main": "index.js",
   "repository": "https://github.com/solve-hq/ShipLogsToHoneycomb",
-  "author": "SAM CLI",
+  "author": "Eric Allam",
   "license": "MIT",
   "dependencies": {
+    "debug": "^4.1.1",
     "libhoney": "^1.2.1",
     "libhoney-promise": "^1.0.0",
-    "debug": "^4.1.1"
+    "lodash": "^4.17.11"
   },
   "devDependencies": {
     "aws-sdk": "*"
