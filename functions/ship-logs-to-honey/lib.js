@@ -75,8 +75,7 @@ const extractLogEvents = event => {
     return _.flatMap(event.Records, record => parseCWLogEvent(record.kinesis.data));
   }
   
-  // direct invocations - expect an array of events
-  return event;
+  throw new Error("Unsupported event source. Only CloudWatch Logs and Kinesis are supported.")
 };
 
 const correlateApiGatewayTraces = event => {
