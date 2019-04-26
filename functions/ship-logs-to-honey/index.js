@@ -10,9 +10,8 @@ const handler = async event => {
     honeyClient = await initHoneyClient("ShipLogs/HoneycombIO");    
   }
 
-  // these are the individual CloudWatch events
-  const logEvents = extractLogEvents(event);
-  await processAll(logEvents);
+  const cwLogEvents = extractLogEvents(event);
+  await processAll(cwLogEvents, honeyClient);
 };
 
 exports.handler = handler;

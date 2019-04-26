@@ -5,14 +5,26 @@ Description: >
 
   Ship logs to honeycomb.io
 
+Metadata:
+  AWS::ServerlessRepo::Application:
+    Name: ship-logs-to-honeycomb
+    Description: Ship logs and traces to honeycomb.io
+    Author: Solve HQ
+    SpdxLicenseId: MIT
+    LicenseUrl: LICENSE
+    ReadmeUrl: README.md
+    Labels: ['lambda', 'honeycomb', 'logging', 'observability']
+    HomePageUrl: https://github.com/solve-hq/ship-logs-to-honeycomb
+    SemanticVersion: 0.1.0
+    SourceCodeUrl: https://github.com/solve-hq/ship-logs-to-honeycomb
+
 Resources:
   ShipLogsToHoney:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ./functions/ship-logs-to-honey
       Handler: index.handler
-      MemorySize: 2048
-      ReservedConcurrentExecutions: 20
+      MemorySize: 1024
       Runtime: nodejs8.10
       Timeout: 30
       Policies:

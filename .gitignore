@@ -103,3 +103,4 @@ yarn-debug.log*
 yarn-error.log*
 .aws-sam
 stack-config.json
+packaged.yml
