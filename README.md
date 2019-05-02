@@ -21,7 +21,7 @@ ShipLogsToHoneycomb:
   Properties:
     Location:
       ApplicationId: arn:aws:serverlessrepo:us-east-1:968223882765:applications/ship-logs-to-honeycomb
-      SemanticVersion: 0.3.0
+      SemanticVersion: <check the repo page to find latest version>
     Parameters:
       EventSourceType: Kinesis
       SecretId: HoneycombIO/credentials

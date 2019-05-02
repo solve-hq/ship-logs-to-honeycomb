@@ -3,7 +3,7 @@ Transform: AWS::Serverless-2016-10-31
 Description: >
   ship-logs-to-honeycomb-app
 
-  Ship logs to honeycomb.io
+  Ship logs and traces to honeycomb.io
 
 Metadata:
   AWS::ServerlessRepo::Application:
