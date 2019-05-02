@@ -1,29 +1,32 @@
 # ship-logs-to-honeycomb
 
-An [AWS SAM](https://github.com/awslabs/serverless-application-model) app that sends logs to [honeycomb.io](http://honeycomb.io/).
+An AWS [Serverless Application Repository](https://serverlessrepo.aws.amazon.com/applications) (SAR) app that sends logs and traces to [honeycomb.io](http://honeycomb.io/).
 
-# Deploying
+This app works with both CloudWatch Logs directly as well as through a Kinesis stream. To decide when to use which, give these two posts a read:
 
-## Command Line
+* [Centralised logging for AWS Lambda](https://theburningmonk.com/2017/08/centralised-logging-for-aws-lambda/)
+* [Centralised logging for AWS Lambda, REVISED(2018)](https://theburningmonk.com/2018/07/centralised-logging-for-aws-lambda-revised-2018/)
 
-If deploying from the command line, you must first make sure you have the latest [aws-sam-cli](https://github.com/awslabs/aws-sam-cli) installed. View instructions for installation [here](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html).
+Besides shipping your Lambda function logs, it can also process API Gateway logs and turn them into traces in HoneyComb.
 
-To deploy to your account, build the app using `sam build` and then deploy using `sam package` and `sam deploy`, like below:
+## Deploying
 
-```bash
-$ sam build
-$ sam package --template-file ./.aws-sam/build/template.yaml \
-              --s3-bucket <S3 BUCKET NAME> \
-              --output-template-file ./.aws-sam/build/packaged.yml \
-              --region <REGION>
+You can deploy from the SAR console [here](https://serverlessrepo.aws.amazon.com/applications/arn:aws:serverlessrepo:us-east-1:968223882765:applications~ship-logs-to-honeycomb). Just click the `Deploy` and follow the instructions to deploy the app to your region.
 
-$ sam deploy --template-file ./.aws-sam/build/packaged.yml \
-             --stack-name <STACK NAME> \
-             --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND \
-             --region <REGION>
+Alternatively, you can also include it in your [AWS SAM](https://github.com/awslabs/serverless-application-model) project as a serverless app, like this:
+
+```yml
+ShipLogsToHoneycomb:
+  Type: AWS::Serverless::Application
+  Properties:
+    Location:
+      ApplicationId: arn:aws:serverlessrepo:us-east-1:968223882765:applications/ship-logs-to-honeycomb
+      SemanticVersion: 0.3.0
+    Parameters:
+      EventSourceType: Kinesis
+      SecretId: HoneycombIO/credentials
+      KinesisStreamArn: !GetAtt LogStream.Arn
 ```
-
-> **Note** The S3 bucket specified above must exist in the same region as the deployed stack, or else deploying will fail.
 
 ### Honeycomb Credentials
 
@@ -31,7 +34,7 @@ Make sure to provide your Honeycomb `writeKey` and `dateset` to this app by crea
 
 > **Note** Make sure to create the secret in the same region as this app
 
-![Create Secret Step 1](/assets/create-secret-1.png)
-![Create Secret Step 2](/assets/create-secret-2.png)
-![Create Secret Step 3](/assets/create-secret-3.png)
-![Create Secret Step 4](/assets/create-secret-4.png)
+![Create Secret Step 1](https://github.com/solve-hq/ship-logs-to-honeycomb/raw/master/assets/create-secret-1.png)
+![Create Secret Step 2](https://github.com/solve-hq/ship-logs-to-honeycomb/raw/master/assets/create-secret-2.png)
+![Create Secret Step 3](https://github.com/solve-hq/ship-logs-to-honeycomb/raw/master/assets/create-secret-3.png)
+![Create Secret Step 4](https://github.com/solve-hq/ship-logs-to-honeycomb/raw/master/assets/create-secret-4.png)
