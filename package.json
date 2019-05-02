@@ -8,6 +8,11 @@
   "engines": {
     "node": ">=8.0.0"
   },
+  "scripts": {
+    "build": "sam build",
+    "package": "sam package --template-file template.yml --output-template-file packaged.yml --s3-bucket devops-us-east-1-968223882765.solvehq.com",
+    "publish": "sam publish --template packaged.yml --region us-east-1"
+  },
   "devDependencies": {
     "aws-sam-helper-commands": "0.x",
     "aws-sdk": "2.x"

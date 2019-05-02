@@ -15,18 +15,66 @@ Metadata:
     ReadmeUrl: README.md
     Labels: ['lambda', 'honeycomb', 'logging', 'observability']
     HomePageUrl: https://github.com/solve-hq/ship-logs-to-honeycomb
-    SemanticVersion: 0.1.0
+    SemanticVersion: 0.3.0
     SourceCodeUrl: https://github.com/solve-hq/ship-logs-to-honeycomb
 
+Parameters:
+  EventSourceType:
+    Type: String
+    Default: 'Lambda'
+    Description: >
+      What's the event source you will intend to use?
+      If logs are pushed from CloudWatch Logs to Lambda directly, then use 'Lambda'.
+      If logs are pushed to a Kinesis Stream first, then use 'Kinesis'.
+      Other event sources are not supported (yet).
+    AllowedValues:
+      - 'Lambda'
+      - 'Kinesis'
+  SecretId:
+    Type: String
+    Description: >
+      The Lambda function expects the HoneyComb credentials to be stored in SecretsManager.
+      Provide the secret ID for the HoneyComb credentials here.
+  TimeoutSeconds:
+    Type: Number
+    Default: 30
+    MaxValue: 900
+    MinValue: 1
+    Description: >
+      (optional) Timeout for the Lambda function that would ship logs to HoneyComb. Defaults to 30s.
+  KinesisStreamArn:
+    Type: String
+    Default: ''
+    Description: >
+      (optional) Only relevant to the Kinesis event source type. The ARN to the Kinesis stream to 
+      subscribe the function to.
+  KinesisStreamBatchSize:
+    Type: Number
+    Default: 100
+    Description: >
+      (optional) Only relevant to the Kinesis event source type. The batch size to use for the 
+      subscription.
+
+Conditions:
+  IsLambda: !Equals [ !Ref EventSourceType, 'Lambda']
+  IsKinesis: !Equals [ !Ref EventSourceType, 'Kinesis']
+
+Globals:
+  Function:
+    Timeout: !Ref TimeoutSeconds
+    Runtime: nodejs8.10
+    MemorySize: 1024
+    CodeUri: ./functions/ship-logs-to-honey
+    Handler: index.handler
+    Environment:
+      Variables:
+        SECRET_ID: !Ref SecretId
+
 Resources:
-  ShipLogsToHoney:
+  ShipLogsToHoneyLambda:
     Type: AWS::Serverless::Function
+    Condition: IsLambda
     Properties:
-      CodeUri: ./functions/ship-logs-to-honey
-      Handler: index.handler
-      MemorySize: 1024
-      Runtime: nodejs8.10
-      Timeout: 30
       Policies:
         - Version: "2012-10-17"
           Statement:
@@ -34,4 +82,39 @@ Resources:
               Action:
                 - secretsmanager:GetSecretValue
               Resource:
-                - !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:ShipLogs/*
+                - !Sub 
+                    - arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${SecretId}
+                    - { SecretId: !Ref SecretId }
+
+  ShipLogsToHoneyKinesis:
+    Type: AWS::Serverless::Function
+    Condition: IsKinesis
+    Properties:
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource:
+                - !Sub 
+                    - arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${SecretId}
+                    - { SecretId: !Ref SecretId }
+      Events:
+        Stream:
+          Type: Kinesis
+          Properties:
+            Stream: !Ref KinesisStreamArn
+            BatchSize: !Ref KinesisStreamBatchSize
+            StartingPosition: LATEST
+
+Outputs:
+  ShipLogsToHoneyLambdaFunctionName:
+    Condition: IsLambda
+    Description: Name of the Lambda function name
+    Value: !Ref ShipLogsToHoneyLambda
+
+  ShipLogsToHoneyLambdaFunctionName:
+    Condition: IsKinesis
+    Description: Name of the Lambda function name
+    Value: !Ref ShipLogsToHoneyKinesis
