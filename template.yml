@@ -15,7 +15,7 @@ Metadata:
     ReadmeUrl: README.md
     Labels: ['lambda', 'honeycomb', 'logging', 'observability']
     HomePageUrl: https://github.com/solve-hq/ship-logs-to-honeycomb
-    SemanticVersion: 0.3.0
+    SemanticVersion: 0.3.2
     SourceCodeUrl: https://github.com/solve-hq/ship-logs-to-honeycomb
 
 Parameters:
@@ -64,8 +64,6 @@ Globals:
     Timeout: !Ref TimeoutSeconds
     Runtime: nodejs8.10
     MemorySize: 1024
-    CodeUri: ./functions/ship-logs-to-honey
-    Handler: index.handler
     Environment:
       Variables:
         SECRET_ID: !Ref SecretId
@@ -75,6 +73,8 @@ Resources:
     Type: AWS::Serverless::Function
     Condition: IsLambda
     Properties:
+      CodeUri: ./functions/ship-logs-to-honey
+      Handler: index.handler
       Policies:
         - Version: "2012-10-17"
           Statement:
@@ -90,6 +90,8 @@ Resources:
     Type: AWS::Serverless::Function
     Condition: IsKinesis
     Properties:
+      CodeUri: ./functions/ship-logs-to-honey
+      Handler: index.handler
       Policies:
         - Version: "2012-10-17"
           Statement:
@@ -98,7 +100,7 @@ Resources:
                 - secretsmanager:GetSecretValue
               Resource:
                 - !Sub 
-                    - arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${SecretId}
+                    - arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${SecretId}-*
                     - { SecretId: !Ref SecretId }
       Events:
         Stream:
