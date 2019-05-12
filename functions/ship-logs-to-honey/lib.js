@@ -2,34 +2,22 @@ const debug = require("debug")("ship-logs-to-honey");
 const zlib = require("zlib");
 const { createHoneyClient } = require("libhoney-promise");
 const apiGwLogParser = require("aws-api-gateway-log-parser");
-const _ = require('lodash');
+const _ = require("lodash");
 
 const SecretsManager = require("aws-sdk/clients/secretsmanager");
 const secretsManager = new SecretsManager({ region: process.env.AWS_REGION });
 
-const apiGwLogParserConfig = {
-  TRUNCATED_RESPONSE_KEYS: [
-    { key: "code", type: "String" },
-    { key: "error", type: "Boolean" },
-    { key: "message", type: "String" }
-  ]
-};
-
-const initHoneyClient = async (secretId) => {
-  debug(
-    `Initializing Honeycomb.IO client with configuration from ${secretId}`
-  );
+const initHoneyClient = async secretId => {
+  debug(`Initializing Honeycomb.IO client with configuration from ${secretId}`);
 
   const getSecretResponse = await secretsManager
     .getSecretValue({ SecretId: secretId })
     .promise();
 
-  const honeycombIOOptions = JSON.parse(
-    getSecretResponse.SecretString || "{}"
-  );
+  const honeycombIOOptions = JSON.parse(getSecretResponse.SecretString || "{}");
 
   return createHoneyClient(honeycombIOOptions);
-}
+};
 
 const tryParseJson = str => {
   try {
@@ -66,23 +54,27 @@ const parseCWLogEvent = data => {
 
   const cwLogEvent = JSON.parse(json);
   const { logGroup, logStream, logEvents } = cwLogEvent;
-  debug(`found [${logEvents.length}] logEvents from ${logGroup} - ${logStream}`);
+  debug(
+    `found [${logEvents.length}] logEvents from ${logGroup} - ${logStream}`
+  );
 
   return cwLogEvent;
 };
 
 const extractLogEvents = event => {
   // CloudWatch Logs
-  if (event.awslogs) {    
-    return [ parseCWLogEvent(event.awslogs.data) ];
+  if (event.awslogs) {
+    return [parseCWLogEvent(event.awslogs.data)];
   }
-  
+
   // Kinesis
   if (event.Records && event.Records[0].eventSource === "aws:kinesis") {
     return event.Records.map(record => parseCWLogEvent(record.kinesis.data));
   }
-  
-  throw new Error("Unsupported event source. Only CloudWatch Logs and Kinesis are supported.")
+
+  throw new Error(
+    "Unsupported event source. Only CloudWatch Logs and Kinesis are supported."
+  );
 };
 
 const correlateApiGatewayTraces = event => {
@@ -223,11 +215,11 @@ const generateApiGatewayEvent = event => {
 };
 
 const parseApiGatewayLogs = cwLogEvent => {
-  const events = apiGwLogParser.parseLogs(apiGwLogParserConfig, cwLogEvent);
+  const events = apiGwLogParser.parseLogs(cwLogEvent);
   debug("Parsed API Gateway logs into events: %j", { events });
 
   if (!events) {
-    console.log('could not parse API Gateway logs', cwLogEvent)
+    console.log("could not parse API Gateway logs", cwLogEvent);
     return [];
   }
 
@@ -257,19 +249,21 @@ const sendHoneycombEvent = async (event, honeyClient) => {
   } catch (err) {
     console.log("failed to send event to Honeycomb", event, err);
   }
-}
+};
 
 const processAll = async (cwLogEvents, honeyClient) => {
   const sendOperations = _.flatMap(cwLogEvents, cwLogEvent => {
-    if (cwLogEvent.logGroup.startsWith('API-Gateway-Execution-Logs')) {
+    if (cwLogEvent.logGroup.startsWith("API-Gateway-Execution-Logs")) {
       const apiGatewayEvents = parseApiGatewayLogs(cwLogEvent);
-      const correlatedApiGatewayEvents = apiGatewayEvents.map(correlateApiGatewayTraces);
+      const correlatedApiGatewayEvents = apiGatewayEvents.map(
+        correlateApiGatewayTraces
+      );
 
       return correlatedApiGatewayEvents.map(apiGwEvent => {
         debug("sending API Gateway log event to honeycomb: %o", apiGwEvent);
         return sendHoneycombEvent(apiGwEvent, honeyClient);
       });
-    } else if (cwLogEvent.logGroup.startsWith('/aws/lambda')) {
+    } else if (cwLogEvent.logGroup.startsWith("/aws/lambda")) {
       return cwLogEvent.logEvents
         .map(parseLambdaLogData)
         .filter(x => x)
@@ -277,17 +271,17 @@ const processAll = async (cwLogEvents, honeyClient) => {
           debug("sending Lambda log event to honeycomb: %o", lambdaLogEvent);
           return sendHoneycombEvent(lambdaLogEvent, honeyClient);
         });
-    } else if (cwLogEvent.messageType === 'CONTROL_MESSAGE') {
-      debug("CloudWatch control message, ignored...")
+    } else if (cwLogEvent.messageType === "CONTROL_MESSAGE") {
+      debug("CloudWatch control message, ignored...");
       return Promise.resolve();
     } else {
-      debug("unknown CW log event type, ignored...", cwLogEvent)
+      debug("unknown CW log event type, ignored...", cwLogEvent);
       return Promise.resolve();
     }
   });
 
   return Promise.all(sendOperations);
-}
+};
 
 module.exports = {
   initHoneyClient,
