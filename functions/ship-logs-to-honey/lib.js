@@ -19,22 +19,24 @@ const initHoneyClient = async secretId => {
   return createHoneyClient(honeycombIOOptions);
 };
 
-const tryParseJson = str => {
+const tryParseEventJson = event => {
   try {
-    return JSON.parse(str);
+    return JSON.parse(event.match(/(INFO\s*)?(.*)/)[2]);
   } catch (e) {
     return null;
   }
 };
 
 const parseLambdaLogData = event => {
+  debug("Parsing lambda log event %o", event);
+
   const {
     request_id: requestId,
     event: rawEvent,
     timestamp: log_timestamp
   } = event.extractedFields;
 
-  const data = tryParseJson(rawEvent);
+  const data = tryParseEventJson(rawEvent);
 
   if (!data) {
     return null;
