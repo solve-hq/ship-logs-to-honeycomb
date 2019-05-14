@@ -15,7 +15,7 @@ Metadata:
     ReadmeUrl: README.md
     Labels: ['lambda', 'honeycomb', 'logging', 'observability']
     HomePageUrl: https://github.com/solve-hq/ship-logs-to-honeycomb
-    SemanticVersion: 0.3.4
+    SemanticVersion: 0.3.5
     SourceCodeUrl: https://github.com/solve-hq/ship-logs-to-honeycomb
 
 Parameters:
