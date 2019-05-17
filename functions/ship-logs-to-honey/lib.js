@@ -120,6 +120,8 @@ const generateApiGatewayEvent = event => {
     event.request_id
   );
 
+  const request_correlation_ids = {};
+
   if (!event.endpoint_response_headers || !event.method_request_headers) {
     if (event.key_throttle) {
       return {
@@ -134,6 +136,7 @@ const generateApiGatewayEvent = event => {
         duration_ms: event["request-execution-duration"],
         timestamp: event["@timestamp"],
         status_code: event.method_status,
+        request_correlation_ids,
         ...event.key_throttle
       };
     }
@@ -188,8 +191,6 @@ const generateApiGatewayEvent = event => {
     mappedHeaders.errorMessage = customer_function_error;
     mappedHeaders.errorName = "LambdaInvocationError";
   }
-
-  const request_correlation_ids = {};
 
   for (const header in method_request_headers) {
     if (header.toLowerCase().startsWith("x-correlation-")) {
