@@ -127,6 +127,8 @@ const generateApiGatewayEvent = event => {
     event.request_id
   );
 
+  const [api, stage] = event.api_stage.split("/");
+
   const request_correlation_ids = {};
 
   if (!event.endpoint_response_headers || !event.method_request_headers) {
@@ -135,6 +137,8 @@ const generateApiGatewayEvent = event => {
         service_name: "APIGateway",
         request_id: event.request_id,
         api_stage: event.api_stage,
+        api,
+        stage,
         level: "ERROR",
         errorMessage:
           "Request throttled because the API Gateway stage is over capacity. Increase the ThrottlingBurstLimit and ThrottlingRateLimit in your Stage method settings",
@@ -212,6 +216,8 @@ const generateApiGatewayEvent = event => {
     service_name: "APIGateway",
     level: "TRACE",
     api_stage,
+    api,
+    stage,
     duration_ms: event["request-execution-duration"],
     timestamp: event["@timestamp"],
     status_code: method_status,
