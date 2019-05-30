@@ -87,12 +87,19 @@ const correlateApiGatewayTraces = event => {
   }
 
   let parentSpanId;
+  let spanId;
 
   if (event.request_correlation_ids["x-correlation-span-id"]) {
-    parentSpanId = event.request_correlation_ids["x-correlation-span-id"];
-  }
+    spanId = event.request_correlation_ids["x-correlation-span-id"];
 
-  const spanId = `${parentSpanId || traceId}-span`;
+    if (spanId.includes("-span")) {
+      const possibleParentSpanId = spanId.substring(0, spanId.indexOf("-span"));
+
+      if (possibleParentSpanId !== traceId) {
+        parentSpanId = possibleParentSpanId;
+      }
+    }
+  }
 
   const traceData = {
     "trace.trace_id": traceId,
@@ -192,10 +199,12 @@ const generateApiGatewayEvent = event => {
     mappedHeaders.errorName = "LambdaInvocationError";
   }
 
-  for (const header in method_request_headers) {
-    if (header.toLowerCase().startsWith("x-correlation-")) {
-      request_correlation_ids[header.toLowerCase()] =
-        method_request_headers[header];
+  if (method_response_headers) {
+    for (const header in method_response_headers) {
+      if (header.toLowerCase().startsWith("x-correlation-")) {
+        request_correlation_ids[header.toLowerCase()] =
+          method_response_headers[header];
+      }
     }
   }
 
