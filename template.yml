@@ -114,4 +114,17 @@ Outputs:
   ShipLogsToHoneyLambdaFunctionName:
     Description: Name of the Lambda function name
     Value: 
-      !If [IsLambda, !Ref ShipLogsToHoneyLambda, !Ref ShipLogsToHoneyKinesis]
+      !If [
+        IsLambda, 
+        !Ref ShipLogsToHoneyLambda, 
+        !Ref ShipLogsToHoneyKinesis
+      ]
+
+  ShipLogsToHoneyLambdaFunctionArn:
+    Description: ARN of the Lambda function name
+    Value: 
+      !If [
+        IsLambda, 
+        !GetAtt ShipLogsToHoneyLambda.Arn, 
+        !GetAtt ShipLogsToHoneyKinesis.Arn
+      ]
