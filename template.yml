@@ -112,11 +112,6 @@ Resources:
 
 Outputs:
   ShipLogsToHoneyLambdaFunctionName:
-    Condition: IsLambda
     Description: Name of the Lambda function name
-    Value: !Ref ShipLogsToHoneyLambda
-
-  ShipLogsToHoneyLambdaFunctionName:
-    Condition: IsKinesis
-    Description: Name of the Lambda function name
-    Value: !Ref ShipLogsToHoneyKinesis
+    Value: 
+      !If [IsLambda, !Ref ShipLogsToHoneyLambda, !Ref ShipLogsToHoneyKinesis]
