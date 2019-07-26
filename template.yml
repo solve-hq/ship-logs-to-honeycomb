@@ -15,7 +15,7 @@ Metadata:
     ReadmeUrl: README.md
     Labels: ['lambda', 'honeycomb', 'logging', 'observability']
     HomePageUrl: https://github.com/solve-hq/ship-logs-to-honeycomb
-    SemanticVersion: 0.3.10
+    SemanticVersion: 0.3.11
     SourceCodeUrl: https://github.com/solve-hq/ship-logs-to-honeycomb
 
 Parameters:
@@ -112,11 +112,19 @@ Resources:
 
 Outputs:
   ShipLogsToHoneyLambdaFunctionName:
-    Condition: IsLambda
     Description: Name of the Lambda function name
-    Value: !Ref ShipLogsToHoneyLambda
+    Value: 
+      !If [
+        IsLambda, 
+        !Ref ShipLogsToHoneyLambda, 
+        !Ref ShipLogsToHoneyKinesis
+      ]
 
-  ShipLogsToHoneyLambdaFunctionName:
-    Condition: IsKinesis
-    Description: Name of the Lambda function name
-    Value: !Ref ShipLogsToHoneyKinesis
+  ShipLogsToHoneyLambdaFunctionArn:
+    Description: ARN of the Lambda function name
+    Value: 
+      !If [
+        IsLambda, 
+        !GetAtt ShipLogsToHoneyLambda.Arn, 
+        !GetAtt ShipLogsToHoneyKinesis.Arn
+      ]
