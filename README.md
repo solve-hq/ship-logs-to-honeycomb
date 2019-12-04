@@ -4,8 +4,8 @@ An AWS [Serverless Application Repository](https://serverlessrepo.aws.amazon.com
 
 This app works with both CloudWatch Logs directly as well as through a Kinesis stream. To decide when to use which, give these two posts a read:
 
-* [Centralised logging for AWS Lambda](https://theburningmonk.com/2017/08/centralised-logging-for-aws-lambda/)
-* [Centralised logging for AWS Lambda, REVISED(2018)](https://theburningmonk.com/2018/07/centralised-logging-for-aws-lambda-revised-2018/)
+- [Centralised logging for AWS Lambda](https://theburningmonk.com/2017/08/centralised-logging-for-aws-lambda/)
+- [Centralised logging for AWS Lambda, REVISED(2018)](https://theburningmonk.com/2018/07/centralised-logging-for-aws-lambda-revised-2018/)
 
 Besides shipping your Lambda function logs, it can also process API Gateway logs and turn them into traces in HoneyComb.
 
@@ -38,3 +38,7 @@ Make sure to provide your Honeycomb `writeKey` and `dateset` to this app by crea
 ![Create Secret Step 2](https://github.com/solve-hq/ship-logs-to-honeycomb/raw/master/assets/create-secret-2.png)
 ![Create Secret Step 3](https://github.com/solve-hq/ship-logs-to-honeycomb/raw/master/assets/create-secret-3.png)
 ![Create Secret Step 4](https://github.com/solve-hq/ship-logs-to-honeycomb/raw/master/assets/create-secret-4.png)
+
+### Overriding the Dataset
+
+You can override the `dataset` that is used if your event includes the `dataset` key/value pair.

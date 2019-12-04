@@ -13,23 +13,23 @@ Metadata:
     SpdxLicenseId: MIT
     LicenseUrl: LICENSE
     ReadmeUrl: README.md
-    Labels: ['lambda', 'honeycomb', 'logging', 'observability']
+    Labels: ["lambda", "honeycomb", "logging", "observability"]
     HomePageUrl: https://github.com/solve-hq/ship-logs-to-honeycomb
-    SemanticVersion: 0.3.11
+    SemanticVersion: 0.3.12
     SourceCodeUrl: https://github.com/solve-hq/ship-logs-to-honeycomb
 
 Parameters:
   EventSourceType:
     Type: String
-    Default: 'Lambda'
+    Default: "Lambda"
     Description: >
       What's the event source you will intend to use?
       If logs are pushed from CloudWatch Logs to Lambda directly, then use 'Lambda'.
       If logs are pushed to a Kinesis Stream first, then use 'Kinesis'.
       Other event sources are not supported (yet).
     AllowedValues:
-      - 'Lambda'
-      - 'Kinesis'
+      - "Lambda"
+      - "Kinesis"
   SecretId:
     Type: String
     Description: >
@@ -44,7 +44,7 @@ Parameters:
       (optional) Timeout for the Lambda function that would ship logs to HoneyComb. Defaults to 30s.
   KinesisStreamArn:
     Type: String
-    Default: ''
+    Default: ""
     Description: >
       (optional) Only relevant to the Kinesis event source type. The ARN to the Kinesis stream to 
       subscribe the function to.
@@ -56,8 +56,8 @@ Parameters:
       subscription.
 
 Conditions:
-  IsLambda: !Equals [ !Ref EventSourceType, 'Lambda']
-  IsKinesis: !Equals [ !Ref EventSourceType, 'Kinesis']
+  IsLambda: !Equals [!Ref EventSourceType, "Lambda"]
+  IsKinesis: !Equals [!Ref EventSourceType, "Kinesis"]
 
 Globals:
   Function:
@@ -82,9 +82,9 @@ Resources:
               Action:
                 - secretsmanager:GetSecretValue
               Resource:
-                - !Sub 
-                    - arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${SecretId}-*
-                    - { SecretId: !Ref SecretId }
+                - !Sub
+                  - arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${SecretId}-*
+                  - { SecretId: !Ref SecretId }
 
   ShipLogsToHoneyKinesis:
     Type: AWS::Serverless::Function
@@ -99,9 +99,9 @@ Resources:
               Action:
                 - secretsmanager:GetSecretValue
               Resource:
-                - !Sub 
-                    - arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${SecretId}-*
-                    - { SecretId: !Ref SecretId }
+                - !Sub
+                  - arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${SecretId}-*
+                  - { SecretId: !Ref SecretId }
       Events:
         Stream:
           Type: Kinesis
@@ -113,18 +113,8 @@ Resources:
 Outputs:
   ShipLogsToHoneyLambdaFunctionName:
     Description: Name of the Lambda function name
-    Value: 
-      !If [
-        IsLambda, 
-        !Ref ShipLogsToHoneyLambda, 
-        !Ref ShipLogsToHoneyKinesis
-      ]
+    Value: !If [IsLambda, !Ref ShipLogsToHoneyLambda, !Ref ShipLogsToHoneyKinesis]
 
   ShipLogsToHoneyLambdaFunctionArn:
     Description: ARN of the Lambda function name
-    Value: 
-      !If [
-        IsLambda, 
-        !GetAtt ShipLogsToHoneyLambda.Arn, 
-        !GetAtt ShipLogsToHoneyKinesis.Arn
-      ]
+    Value: !If [IsLambda, !GetAtt ShipLogsToHoneyLambda.Arn, !GetAtt ShipLogsToHoneyKinesis.Arn]
