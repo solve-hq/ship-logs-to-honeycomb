@@ -11,7 +11,7 @@
     "aws-api-gateway-log-parser": "ericallam/aws-api-gateway-log-parser#better-truncated-parsing",
     "debug": "^4.1.1",
     "libhoney": "^1.2.1",
-    "libhoney-promise": "^1.0.2",
+    "libhoney-promise": "^1.0.3",
     "lodash": "^4.17.11"
   },
   "devDependencies": {
