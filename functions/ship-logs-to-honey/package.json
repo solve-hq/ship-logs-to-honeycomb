@@ -12,7 +12,7 @@
     "debug": "^4.1.1",
     "libhoney": "^1.2.1",
     "libhoney-promise": "^1.0.3",
-    "lodash": "^4.17.13"
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "aws-sdk": "*"
